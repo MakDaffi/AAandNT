@@ -1,0 +1,224 @@
+\documentclass[spec, och, labwork]{shiza}
+% параметр - тип обучения - одно из значений:
+%    spec     - специальность
+%    bachelor - бакалавриат (по умолчанию)
+%    master   - магистратура
+% параметр - форма обучения - одно из значений:
+%    och   - очное (по умолчанию)
+%    zaoch - заочное
+% параметр - тип работы - одно из значений:
+%    referat    - реферат
+%    coursework - курсовая работа (по умолчанию)
+%    diploma    - дипломная работа
+%    pract      - отчет по практике
+% параметр - включение шрифта
+%    times    - включение шрифта Times New Roman (если установлен)
+%               по умолчанию выключен
+\usepackage{subfigure}
+\usepackage{tikz,pgfplots}
+\pgfplotsset{compat=1.5}
+\usepackage{float}
+
+%\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+%\titleformat{\paragraph}
+%{\normalfont\normalsize}{\theparagraph}{1em}{}
+%\titlespacing*{\paragraph}
+%{35.5pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\titleformat{\paragraph}[block]
+{\hspace{1.25cm}\normalfont}
+{\theparagraph}{1ex}{}
+\titlespacing{\paragraph}
+{0cm}{2ex plus 1ex minus .2ex}{.4ex plus.2ex}
+
+% --------------------------------------------------------------------------%
+
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{tempora}
+
+\usepackage[sort,compress]{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{listingsutf8}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage[english,russian]{babel}
+
+% \usepackage[colorlinks=true]{hyperref}
+\usepackage{url}
+
+\usepackage{underscore}
+\usepackage{setspace}
+\usepackage{indentfirst} 
+\usepackage{mathtools}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{minted}
+
+\newcommand{\eqdef}{\stackrel {\rm def}{=}}
+\newcommand{\specialcell}[2][c]{%
+\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
+\renewcommand\theFancyVerbLine{\small\arabic{FancyVerbLine}}
+
+\newtheorem{lem}{Лемма}
+
+\begin{document}
+
+% Кафедра (в родительном падеже)
+\chair{}
+
+% Тема работы
+\title{Алгоритм Евклида для полиномов}
+
+% Курс
+\course{4}
+
+% Группа
+\group{431}
+
+% Факультет (в родительном падеже) (по умолчанию "факультета КНиИТ")
+\department{факультета КНиИТ}
+
+% Специальность/направление код - наименование
+%\napravlenie{09.03.04 "--- Программная инженерия}
+%\napravlenie{010500 "--- Математическое обеспечение и администрирование информационных систем}
+%\napravlenie{230100 "--- Информатика и вычислительная техника}
+%\napravlenie{231000 "--- Программная инженерия}
+\napravlenie{100501 "--- Компьютерная безопасность}
+
+% Для студентки. Для работы студента следующая команда не нужна.
+% \studenttitle{Студентки}
+
+% Фамилия, имя, отчество в родительном падеже
+\author{Окунькова Сергея Викторовича}
+
+% Заведующий кафедрой
+% \chtitle{} % степень, звание
+% \chname{}
+
+%Научный руководитель (для реферата преподаватель проверяющий работу)
+\satitle{доцент} %должность, степень, звание
+\saname{А. С. Гераськин}
+
+% Руководитель практики от организации (только для практики,
+% для остальных типов работ не используется)
+% \patitle{к.ф.-м.н.}
+% \paname{С.~В.~Миронов}
+
+% Семестр (только для практики, для остальных
+% типов работ не используется)
+%\term{8}
+
+% Наименование практики (только для практики, для остальных
+% типов работ не используется)
+%\practtype{преддипломная}
+
+% Продолжительность практики (количество недель) (только для практики,
+% для остальных типов работ не используется)
+%\duration{4}
+
+% Даты начала и окончания практики (только для практики, для остальных
+% типов работ не используется)
+%\practStart{30.04.2019}
+%\practFinish{27.05.2019}
+
+% Год выполнения отчета
+\date{2022}
+
+\maketitle
+
+% Включение нумерации рисунков, формул и таблиц по разделам
+% (по умолчанию - нумерация сквозная)
+% (допускается оба вида нумерации)
+% \secNumbering
+
+%-------------------------------------------------------------------------------------------
+\tableofcontents
+
+\section{Постановка задачи}
+
+Реализовать алгоритмы вычисления НОД в кольцах полиномов:
+
+\begin{enumerate}
+    \item Расширенный алгоритм Евклида для полиномов над полем;
+    \item Обобщённый алгоритм Евклида для полиномов над целыми числами.
+\end{enumerate}
+
+\section{Теоретические сведения об алгортиме}
+
+\textbf{Расширенный алгоритм Евклида для полиномов над полем:}
+
+[ Инициализация ]
+
+1. p0(x),p1(x):=p1(x),p2(x) 
+
+2. g0(x),g1(x):=(1,0)
+
+3. f0(x),f1(x):=(0,1)
+
+[ Основной цикл Пока $p1(x) \neq 0$ ]:
+
+4.1 q (x) := PDF (p0(x), p1(x))
+
+4.2 p0(x), p1(x) := p1(x), p0(x)-p1(x)*q(x)
+
+4.3 g0(x), g1(x) := g1(x), g0(x)-g1(x)*q(x)
+
+4.4 f0(x), f1(x) := f1(x), f0(x)-f1(x)*q(x)
+
+[Конец Цикла Пока]
+
+5. Вернуть p0(x), g0(x), f0(x)
+
+\textbf{Обобщённый алгоритм Евклида для полиномов над целыми числами}
+
+[Вычисление НОД содержаний полинома]
+
+1. c:=НОД(cont(p1(x)), cont(p2(x)))
+
+[Вычисление примитивных частей]
+
+2. p'1 (x):=p1 (x)/cont(p1 (x))
+
+3. p'2 (x):=p2 (x)/cont(p2 (x))
+
+[Построение PRS]
+
+4. // Вычислить полиномиальные остатки : p3 (x) , p4 (x) , ... , ph (x)
+
+5. Вернуть c * p.p.(ph(x))
+
+\section{Код программы, реализующий рассмотренный алгоритм}
+
+\subsection{Код программы для расширенного алгоритма Евклида для полиномов над полем}
+   \inputminted[fontsize=\small]{scala}{../code/task14.1.scala}
+\subsection{Код программы для обобщённого алгоритма Евклида для полиномов над целыми числами}
+   \inputminted[fontsize=\small]{scala}{../code/task14.2.scala}
+    
+\section{Результаты тестирования программ}
+
+        \begin{figure}[H]
+            \centering      %размер рисунка       здесь находится название файла рисунка, без указания формата
+            \includegraphics[width=1.\textwidth]{1}
+            \caption{Тест 1-го алгоритма}
+            \label{fig:image1}
+        \end{figure}
+        
+        \begin{figure}[H]
+            \centering      %размер рисунка       здесь находится название файла рисунка, без указания формата
+            \includegraphics[width=1.\textwidth]{2}
+            \caption{Тест 2-го алгоритма}
+            \label{fig:image1}
+        \end{figure}
+
+\end{document}

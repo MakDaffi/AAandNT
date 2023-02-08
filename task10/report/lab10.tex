@@ -1,0 +1,210 @@
+\documentclass[spec, och, labwork]{shiza}
+% параметр - тип обучения - одно из значений:
+%    spec     - специальность
+%    bachelor - бакалавриат (по умолчанию)
+%    master   - магистратура
+% параметр - форма обучения - одно из значений:
+%    och   - очное (по умолчанию)
+%    zaoch - заочное
+% параметр - тип работы - одно из значений:
+%    referat    - реферат
+%    coursework - курсовая работа (по умолчанию)
+%    diploma    - дипломная работа
+%    pract      - отчет по практике
+% параметр - включение шрифта
+%    times    - включение шрифта Times New Roman (если установлен)
+%               по умолчанию выключен
+\usepackage{subfigure}
+\usepackage{tikz,pgfplots}
+\pgfplotsset{compat=1.5}
+\usepackage{float}
+
+%\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+%\titleformat{\paragraph}
+%{\normalfont\normalsize}{\theparagraph}{1em}{}
+%\titlespacing*{\paragraph}
+%{35.5pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\titleformat{\paragraph}[block]
+{\hspace{1.25cm}\normalfont}
+{\theparagraph}{1ex}{}
+\titlespacing{\paragraph}
+{0cm}{2ex plus 1ex minus .2ex}{.4ex plus.2ex}
+
+% --------------------------------------------------------------------------%
+
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{tempora}
+
+\usepackage[sort,compress]{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{listingsutf8}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage[english,russian]{babel}
+
+% \usepackage[colorlinks=true]{hyperref}
+\usepackage{url}
+
+\usepackage{underscore}
+\usepackage{setspace}
+\usepackage{indentfirst} 
+\usepackage{mathtools}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{minted}
+
+\newcommand{\eqdef}{\stackrel {\rm def}{=}}
+\newcommand{\specialcell}[2][c]{%
+\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
+\renewcommand\theFancyVerbLine{\small\arabic{FancyVerbLine}}
+
+\newtheorem{lem}{Лемма}
+
+\begin{document}
+
+% Кафедра (в родительном падеже)
+\chair{}
+
+% Тема работы
+\title{Гененрация простого числа с помощью алгоритма теста Поклингтона}
+
+% Курс
+\course{4}
+
+% Группа
+\group{431}
+
+% Факультет (в родительном падеже) (по умолчанию "факультета КНиИТ")
+\department{факультета КНиИТ}
+
+% Специальность/направление код - наименование
+%\napravlenie{09.03.04 "--- Программная инженерия}
+%\napravlenie{010500 "--- Математическое обеспечение и администрирование информационных систем}
+%\napravlenie{230100 "--- Информатика и вычислительная техника}
+%\napravlenie{231000 "--- Программная инженерия}
+\napravlenie{100501 "--- Компьютерная безопасность}
+
+% Для студентки. Для работы студента следующая команда не нужна.
+% \studenttitle{Студентки}
+
+% Фамилия, имя, отчество в родительном падеже
+\author{Окунькова Сергея Викторовича}
+
+% Заведующий кафедрой
+% \chtitle{} % степень, звание
+% \chname{}
+
+%Научный руководитель (для реферата преподаватель проверяющий работу)
+\satitle{доцент} %должность, степень, звание
+\saname{А. С. Гераськин}
+
+% Руководитель практики от организации (только для практики,
+% для остальных типов работ не используется)
+% \patitle{к.ф.-м.н.}
+% \paname{С.~В.~Миронов}
+
+% Семестр (только для практики, для остальных
+% типов работ не используется)
+%\term{8}
+
+% Наименование практики (только для практики, для остальных
+% типов работ не используется)
+%\practtype{преддипломная}
+
+% Продолжительность практики (количество недель) (только для практики,
+% для остальных типов работ не используется)
+%\duration{4}
+
+% Даты начала и окончания практики (только для практики, для остальных
+% типов работ не используется)
+%\practStart{30.04.2019}
+%\practFinish{27.05.2019}
+
+% Год выполнения отчета
+\date{2022}
+
+\maketitle
+
+% Включение нумерации рисунков, формул и таблиц по разделам
+% (по умолчанию - нумерация сквозная)
+% (допускается оба вида нумерации)
+% \secNumbering
+
+%-------------------------------------------------------------------------------------------
+\tableofcontents
+
+\section{Постановка задачи}
+
+Осуществить построение большого простого числа с использованием теоремы Поклингтона.
+
+\section{Теоретические сведения об алгортиме}
+
+Критерий Поклингтона — детерминированный тест на простоту, разработанный Генри 
+Поклингтоном и Дерриком Генри Лехмером. Критерий Поклингтона позволяет определять, 
+является ли данное число простым.
+
+\textbf{Теорема Поклингтона}
+
+Пусть $n = q^kR + 1$, где $q$ - простое число, $k \geq 1$. 
+Если существует такое целое число $a$, что $a^{n - 1} \equiv 1$
+(mod $n$) и НОД$(a^{{(n-1)}/q}-1,n) = 1$, то каждый простой делитель 
+$p$ числа $n$ имеет вид $p=q^{k}r+1$ при некотором натуральном $r$.
+
+\textbf{Критерий Поклингтона}
+
+Пусть $n$ — натуральное число. Пусть число $n-1$ имеет простой делитель
+$q$, причем $q>{\sqrt {n}}-1$. Если найдётся такое целое число $a$, 
+что выполняются следующие два условия:
+\begin{enumerate}
+    \item $a^{n - 1} \equiv 1$ (mod $n$)
+    \item числа $n$ и $a^{(n-1)/q}-1$ взаимнопросты,
+\end{enumerate}
+то $n$ - простое число.
+
+\section{Код программы, реализующий рассмотренный алгоритм}
+
+   \inputminted[fontsize=\small]{scala}{../code/task10.scala}
+    
+\section{Результаты тестирования программ}
+
+        \begin{figure}[H]
+            \centering      %размер рисунка       здесь находится название файла рисунка, без указания формата
+            \includegraphics[width=1.\textwidth]{1}
+            \caption{Тест 1}
+            \label{fig:image1}
+        \end{figure}
+        
+        \begin{figure}[H]
+            \centering      %размер рисунка       здесь находится название файла рисунка, без указания формата
+            \includegraphics[width=1.\textwidth]{2}
+            \caption{Тест 2}
+            \label{fig:image1}
+        \end{figure}
+
+        \begin{figure}[H]
+            \centering      %размер рисунка       здесь находится название файла рисунка, без указания формата
+            \includegraphics[width=1.\textwidth]{3}
+            \caption{Тест 3}
+            \label{fig:image1}
+        \end{figure}
+
+        \begin{figure}[H]
+            \centering      %размер рисунка       здесь находится название файла рисунка, без указания формата
+            \includegraphics[width=1.\textwidth]{4}
+            \caption{Тест 4}
+            \label{fig:image1}
+        \end{figure}
+
+\end{document}

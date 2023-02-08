@@ -1,0 +1,219 @@
+\documentclass[spec, och, labwork]{shiza}
+% параметр - тип обучения - одно из значений:
+%    spec     - специальность
+%    bachelor - бакалавриат (по умолчанию)
+%    master   - магистратура
+% параметр - форма обучения - одно из значений:
+%    och   - очное (по умолчанию)
+%    zaoch - заочное
+% параметр - тип работы - одно из значений:
+%    referat    - реферат
+%    coursework - курсовая работа (по умолчанию)
+%    diploma    - дипломная работа
+%    pract      - отчет по практике
+% параметр - включение шрифта
+%    times    - включение шрифта Times New Roman (если установлен)
+%               по умолчанию выключен
+\usepackage{subfigure}
+\usepackage{tikz,pgfplots}
+\pgfplotsset{compat=1.5}
+\usepackage{float}
+
+%\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+%\titleformat{\paragraph}
+%{\normalfont\normalsize}{\theparagraph}{1em}{}
+%\titlespacing*{\paragraph}
+%{35.5pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\titleformat{\paragraph}[block]
+{\hspace{1.25cm}\normalfont}
+{\theparagraph}{1ex}{}
+\titlespacing{\paragraph}
+{0cm}{2ex plus 1ex minus .2ex}{.4ex plus.2ex}
+
+% --------------------------------------------------------------------------%
+
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{tempora}
+
+\usepackage[sort,compress]{cite}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{fancyvrb}
+\usepackage{listings}
+\usepackage{listingsutf8}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage[english,russian]{babel}
+
+% \usepackage[colorlinks=true]{hyperref}
+\usepackage{url}
+
+\usepackage{underscore}
+\usepackage{setspace}
+\usepackage{indentfirst} 
+\usepackage{mathtools}
+\usepackage{amsfonts}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{minted}
+
+\newcommand{\eqdef}{\stackrel {\rm def}{=}}
+\newcommand{\specialcell}[2][c]{%
+\begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
+\renewcommand\theFancyVerbLine{\small\arabic{FancyVerbLine}}
+
+\newtheorem{lem}{Лемма}
+
+\begin{document}
+
+% Кафедра (в родительном падеже)
+\chair{}
+
+% Тема работы
+\title{Факторизация чисел с помощью алгоритма Диксона}
+
+% Курс
+\course{4}
+
+% Группа
+\group{431}
+
+% Факультет (в родительном падеже) (по умолчанию "факультета КНиИТ")
+\department{факультета КНиИТ}
+
+% Специальность/направление код - наименование
+%\napravlenie{09.03.04 "--- Программная инженерия}
+%\napravlenie{010500 "--- Математическое обеспечение и администрирование информационных систем}
+%\napravlenie{230100 "--- Информатика и вычислительная техника}
+%\napravlenie{231000 "--- Программная инженерия}
+\napravlenie{100501 "--- Компьютерная безопасность}
+
+% Для студентки. Для работы студента следующая команда не нужна.
+% \studenttitle{Студентки}
+
+% Фамилия, имя, отчество в родительном падеже
+\author{Окунькова Сергея Викторовича}
+
+% Заведующий кафедрой
+% \chtitle{} % степень, звание
+% \chname{}
+
+%Научный руководитель (для реферата преподаватель проверяющий работу)
+\satitle{доцент} %должность, степень, звание
+\saname{А. С. Гераськин}
+
+% Руководитель практики от организации (только для практики,
+% для остальных типов работ не используется)
+% \patitle{к.ф.-м.н.}
+% \paname{С.~В.~Миронов}
+
+% Семестр (только для практики, для остальных
+% типов работ не используется)
+%\term{8}
+
+% Наименование практики (только для практики, для остальных
+% типов работ не используется)
+%\practtype{преддипломная}
+
+% Продолжительность практики (количество недель) (только для практики,
+% для остальных типов работ не используется)
+%\duration{4}
+
+% Даты начала и окончания практики (только для практики, для остальных
+% типов работ не используется)
+%\practStart{30.04.2019}
+%\practFinish{27.05.2019}
+
+% Год выполнения отчета
+\date{2022}
+
+\maketitle
+
+% Включение нумерации рисунков, формул и таблиц по разделам
+% (по умолчанию - нумерация сквозная)
+% (допускается оба вида нумерации)
+% \secNumbering
+
+%-------------------------------------------------------------------------------------------
+\tableofcontents
+
+\section{Постановка задачи}
+
+Осуществить факторизацию с помощью алгоритма Диксона.
+
+\section{Теоретические сведения об алгортиме}
+
+Алгоритм Диксона — алгоритм факторизации, использующий 
+в своей основе идею Лежандра, заключающуюся в поиске 
+пары целых чисел $x$ и $y$ таких, что $x^2 \equiv y^2\pmod{n}$ и 
+$x \not\equiv \pm y\pmod{n}$.
+
+\textbf{Описание алгоритма}
+\begin{enumerate}
+    \item Составить факторную базу $P = $ {$p_1, ..., p_h$} , состоящую из всех простых чисел
+    $p \leq M = \sqrt{L(n)}$, где $L(n) = exp(\sqrt{\ln{n}\ln{\ln{n}}})$.
+    \item Выбрать случайное $b$, $\sqrt{n} < b < n$.
+    \item Вычислить $a = b^2 \pmod{n}$.
+    \item Проверить число на $a$ а гладкость пробными делениями. Если
+    $a$ является $B$-гладким, следует запомнить вектор $\vec{\alpha}\left({b}\right)$ и 
+    $\vec{\varepsilon}\left({b}\right)$:
+
+    $\vec{\alpha}\left({b}\right)=\left({\alpha_{p_1}\left({b}\right), \dots, \alpha_{p_h}\left({b}\right)}\right)$
+    
+    $\vec{\varepsilon}\left({b}\right)=\left({\alpha_{p_1}\left({b}\right)\bmod{2}, \dots, \alpha_{p_h}\left({b}\right)\bmod{2}}\right)$.
+    \item Повторять процедуру генерации чисел $b$ до тех пор, пока не будет найдено
+    $h+1$ $B$-гладких чисел $b_1, ..., b_{h+1}$
+    \item Найдем линейную зависимость среди векторов $\vec{\varepsilon}\left({b_1}\right), \dots, \vec{\varepsilon}\left({b_{h+1}}\right)$
+    и положить 
+    
+    $x=b_{i_1} \dots b_{i_t}\bmod{n}$,
+
+    $y=\prod_{p\in B}p^{\left({ \alpha_p\left({b_{i_1}}\right)+\dots+\alpha_p\left({b_{i_t}}\right) }\right) \over{2}}\bmod{n}$.
+
+    \item Проверить $x \equiv \pm y \pmod{n}$. Если это так, то повторить процедуру генерации. Если нет, то найдено нетривиальное разложение:
+    $n=u\cdot v,u=gcd\left({x+y,n}\right),v=gcd\left({x-y,n}\right)$.
+\end{enumerate}
+
+\section{Код программы, реализующий рассмотренный алгоритм}
+
+   \inputminted[fontsize=\small]{scala}{../code/task12.scala}
+    
+\section{Результаты тестирования программ}
+
+        \begin{figure}[H]
+            \centering      %размер рисунка       здесь находится название файла рисунка, без указания формата
+            \includegraphics[width=1.\textwidth]{1}
+            \caption{Тест 1}
+            \label{fig:image1}
+        \end{figure}
+        
+        \begin{figure}[H]
+            \centering      %размер рисунка       здесь находится название файла рисунка, без указания формата
+            \includegraphics[width=1.\textwidth]{2}
+            \caption{Тест 2}
+            \label{fig:image1}
+        \end{figure}
+
+        \begin{figure}[H]
+            \centering      %размер рисунка       здесь находится название файла рисунка, без указания формата
+            \includegraphics[width=1.\textwidth]{3}
+            \caption{Тест 3}
+            \label{fig:image1}
+        \end{figure}
+
+        \begin{figure}[H]
+            \centering      %размер рисунка       здесь находится название файла рисунка, без указания формата
+            \includegraphics[width=1.\textwidth]{4}
+            \caption{Тест 4}
+            \label{fig:image1}
+        \end{figure}
+
+\end{document}
